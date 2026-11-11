@@ -17,7 +17,7 @@ import {
 } from './missions.js';
 
 const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-const STICKERS = ['🦅', '🦖', '🚀', '🌋', '🌈', '🐘', '🦕', '🪐', '🐬', '🦁', '🌪️', '🐢'];
+const STICKERS = ['🛩️', '🦖', '🚀', '🌋', '🌈', '🐘', '🦕', '🪐', '🐬', '🦁', '🌪️', '🐢'];
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('game');
@@ -459,7 +459,7 @@ function update(dt) {
   }
 
   // Contrail
-  trail.push({ x: plane.x - H * 0.07, y: plane.y + H * 0.01, life: 1 });
+  trail.push({ x: plane.x - planeSize() * 1.7, y: plane.y + planeSize() * 0.04, life: 1 });
   for (const t of trail) {
     t.x -= speed * dt;
     t.life -= dt * 1.4;
@@ -658,61 +658,127 @@ function drawAnswerCloud(col, c) {
   g.restore();
 }
 
+const planeSize = () => Math.min(H * 0.075, 70);
+
+// A friendly navy-and-gold fighter jet (original art, no real insignia).
 function drawPlane() {
-  const s = Math.min(H * 0.075, 70);
+  const s = planeSize();
   const bob = Math.sin(time * 2.5) * 3;
   const tilt = Math.max(-0.45, Math.min(0.45, plane.vy / (H * 1.4)));
+  const NAVY = '#1d3f91';
+  const NAVY_DARK = '#142d6b';
+  const GOLD = '#f7c641';
   g.save();
   g.translate(plane.x, plane.y + bob);
   g.rotate(tilt);
 
-  // Contrail drawn in world space (see drawTrail).
-  // Tail fin
-  g.fillStyle = '#e04848';
+  // Afterburner flicker
+  const flame = s * (0.45 + Math.random() * 0.2);
+  g.fillStyle = 'rgba(255, 170, 60, 0.85)';
   g.beginPath();
-  g.moveTo(-s * 1.25, -s * 0.1);
-  g.lineTo(-s * 1.55, -s * 0.85);
-  g.lineTo(-s * 1.05, -s * 0.85);
-  g.lineTo(-s * 0.7, -s * 0.1);
+  g.ellipse(-s * 1.62 - flame * 0.5, s * 0.04, flame * 0.6, s * 0.13, 0, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = 'rgba(255, 240, 170, 0.95)';
+  g.beginPath();
+  g.ellipse(-s * 1.62 - flame * 0.25, s * 0.04, flame * 0.3, s * 0.07, 0, 0, Math.PI * 2);
+  g.fill();
+
+  // Far tail fin (twin tails), slightly darker
+  g.fillStyle = NAVY_DARK;
+  g.beginPath();
+  g.moveTo(-s * 0.6, -s * 0.18);
+  g.lineTo(-s * 1.1, -s * 0.9);
+  g.lineTo(-s * 1.32, -s * 0.9);
+  g.lineTo(-s * 1.4, -s * 0.18);
   g.closePath();
   g.fill();
-  // Body
-  g.fillStyle = '#ff5a5f';
+
+  // Fuselage
+  g.fillStyle = NAVY;
   g.beginPath();
-  g.ellipse(0, 0, s * 1.4, s * 0.48, 0, 0, Math.PI * 2);
-  g.fill();
-  // Belly stripe
-  g.fillStyle = '#ffffff';
-  g.beginPath();
-  g.ellipse(0, s * 0.18, s * 1.25, s * 0.16, 0, 0, Math.PI * 2);
-  g.fill();
-  // Cockpit with co-pilot
-  g.fillStyle = '#bfe9ff';
-  g.beginPath();
-  g.ellipse(s * 0.25, -s * 0.38, s * 0.5, s * 0.36, 0, Math.PI, 0);
-  g.fill();
-  g.font = `${s * 0.62}px ${EMOJI_FONT}`;
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText('🦅', s * 0.3, -s * 0.5);
-  // Wing
-  g.fillStyle = '#ffd447';
-  g.beginPath();
-  g.moveTo(-s * 0.35, s * 0.05);
-  g.quadraticCurveTo(s * 0.1, s * 0.9, s * 0.55, s * 0.75);
-  g.lineTo(s * 0.35, s * 0.05);
+  g.moveTo(s * 1.8, s * 0.06); // nose tip
+  g.quadraticCurveTo(s * 1.35, -s * 0.2, s * 0.9, -s * 0.24);
+  g.lineTo(-s * 1.25, -s * 0.26);
+  g.lineTo(-s * 1.62, -s * 0.14);
+  g.lineTo(-s * 1.62, s * 0.2);
+  g.lineTo(-s * 1.1, s * 0.3);
+  g.lineTo(s * 0.7, s * 0.3);
+  g.quadraticCurveTo(s * 1.35, s * 0.26, s * 1.8, s * 0.06);
   g.closePath();
   g.fill();
-  // Nose + propeller
-  g.fillStyle = '#ffd447';
+
+  // Gold stripe from nose to tail
+  g.fillStyle = GOLD;
   g.beginPath();
-  g.arc(s * 1.38, 0, s * 0.18, 0, Math.PI * 2);
+  g.moveTo(s * 1.55, s * 0.08);
+  g.lineTo(-s * 1.6, s * 0.04);
+  g.lineTo(-s * 1.6, s * 0.13);
+  g.lineTo(s * 1.35, s * 0.17);
+  g.closePath();
   g.fill();
-  const blade = Math.abs(Math.sin(time * 40)) * s * 0.75 + s * 0.08;
-  g.fillStyle = 'rgba(90, 90, 110, 0.75)';
+
+  // Engine intake
+  g.fillStyle = NAVY_DARK;
   g.beginPath();
-  g.ellipse(s * 1.5, 0, s * 0.07, blade, 0, 0, Math.PI * 2);
+  g.moveTo(s * 0.35, s * 0.18);
+  g.lineTo(-s * 0.35, s * 0.18);
+  g.lineTo(-s * 0.45, s * 0.34);
+  g.lineTo(s * 0.25, s * 0.34);
+  g.closePath();
   g.fill();
+
+  // Near tail fin with gold tip
+  g.fillStyle = NAVY;
+  g.beginPath();
+  g.moveTo(-s * 0.75, -s * 0.22);
+  g.lineTo(-s * 1.25, -s * 1.0);
+  g.lineTo(-s * 1.52, -s * 1.0);
+  g.lineTo(-s * 1.58, -s * 0.2);
+  g.closePath();
+  g.fill();
+  g.fillStyle = GOLD;
+  g.beginPath();
+  g.moveTo(-s * 1.19, -s * 0.9);
+  g.lineTo(-s * 1.25, -s * 1.0);
+  g.lineTo(-s * 1.52, -s * 1.0);
+  g.lineTo(-s * 1.53, -s * 0.9);
+  g.closePath();
+  g.fill();
+
+  // Swept wing (gold) and tail plane
+  g.fillStyle = GOLD;
+  g.beginPath();
+  g.moveTo(s * 0.45, s * 0.2);
+  g.lineTo(-s * 0.85, s * 0.55);
+  g.lineTo(-s * 1.1, s * 0.55);
+  g.lineTo(-s * 0.55, s * 0.2);
+  g.closePath();
+  g.fill();
+  g.fillStyle = NAVY_DARK;
+  g.beginPath();
+  g.moveTo(-s * 1.15, s * 0.18);
+  g.lineTo(-s * 1.55, s * 0.4);
+  g.lineTo(-s * 1.68, s * 0.4);
+  g.lineTo(-s * 1.55, s * 0.16);
+  g.closePath();
+  g.fill();
+
+  // Bubble canopy
+  g.fillStyle = '#9fdcff';
+  g.beginPath();
+  g.ellipse(s * 0.6, -s * 0.22, s * 0.55, s * 0.24, 0, Math.PI, 0);
+  g.fill();
+  g.fillStyle = 'rgba(255,255,255,0.75)';
+  g.beginPath();
+  g.ellipse(s * 0.75, -s * 0.33, s * 0.2, s * 0.06, -0.2, 0, Math.PI * 2);
+  g.fill();
+  g.strokeStyle = NAVY_DARK;
+  g.lineWidth = Math.max(1.5, s * 0.04);
+  g.beginPath();
+  g.moveTo(s * 0.45, -s * 0.44);
+  g.lineTo(s * 0.45, -s * 0.22);
+  g.stroke();
+
   g.restore();
 }
 
