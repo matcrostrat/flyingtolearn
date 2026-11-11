@@ -1,0 +1,12 @@
+{
+  "name": "flyingtolearn",
+  "private": true,
+  "type": "module",
+  "description": "A gentle flying game for a 5-year-old: counting and sorting woven into flight.",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "voice": "node scripts/gen-voice.mjs",
+    "voice:audition": "node scripts/gen-voice.mjs --audition"
+  }
+}

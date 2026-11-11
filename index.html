@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#6ec6ff" />
+    <title>Flying to Learn</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <canvas id="game" aria-label="Flying game"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" hidden>
+      <button id="home" class="round-btn" aria-label="Back to missions">🏠</button>
+      <div id="progress" aria-hidden="true"></div>
+      <div id="stars"><span class="star-icon">⭐</span><span id="star-count">0</span></div>
+    </div>
+
+    <!-- Co-pilot speech bubble -->
+    <div id="bubble" class="hidden" aria-live="polite">
+      <div class="avatar">🦅</div>
+      <div id="bubble-text"></div>
+    </div>
+
+    <!-- Start -->
+    <div id="start" class="overlay">
+      <div class="title-art">✈️ ☁️ 🦅</div>
+      <button id="start-btn" class="big-btn" aria-label="Start flying">▶</button>
+      <div class="hint">tap or press any key</div>
+    </div>
+
+    <!-- Mission picker -->
+    <div id="picker" class="overlay" hidden>
+      <div class="cards">
+        <button class="card" data-mission="count" aria-label="Count the birds">
+          <div class="card-art">☁️</div>
+          <div class="card-sub">🐦🐦🐦</div>
+        </button>
+        <button class="card" data-mission="sort" aria-label="Catch the round things">
+          <div class="card-art">⚽</div>
+          <div class="card-sub">🍊🔵🏀</div>
+        </button>
+      </div>
+      <div id="shelf" aria-label="Stickers earned"></div>
+    </div>
+
+    <!-- Sticker reveal -->
+    <div id="sticker" class="overlay" hidden>
+      <div id="sticker-art" class="sticker-art"></div>
+      <button id="sticker-next" class="big-btn" aria-label="Continue" hidden>▶</button>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
